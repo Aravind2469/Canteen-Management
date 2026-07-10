@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Canteen Management System</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+/* =========================
+   MODERN DESIGN SYSTEM
+========================= */
+:root {
+    --bg: #f8fafc;
+    --card: rgba(255, 255, 255, 0.85);
+    --stroke: rgba(34, 197, 94, 0.12);
+    --green: #22c55e;
+    --green-hover: #16a34a;
+    --green-light: rgba(34, 197, 94, 0.1);
+    --red: #ef4444;
+    --red-light: rgba(239, 68, 68, 0.1);
+    --text: #0f172a;
+    --muted: #64748b;
+    --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', system-ui, sans-serif;
+}
+body {
+    background: radial-gradient(circle at top, #ffffff, var(--bg));
+    color: var(--text);
+    min-height: 100vh;
+}
+/* =========================
+   SCREENS & LAYOUT
+========================= */
+.screen {
+    display: none;
+    min-height: 100vh;
+    padding: 24px;
+}
+.screen.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.panel {
+    width: 100%;
+    max-width: 520px;
+    background: var(--card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--stroke);
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+/* =========================
+   BEAUTIFIED HERO HEADER
+========================= */
+.hero-banner {
+    position: relative;
+    width: calc(100% + 48px);
+    margin: -24px -24px 20px -24px;
+    height: 160px;
+    background: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.85)), 
+                url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px 24px;
+}
+.brand {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.75px;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+/* =========================
+   COMPONENTS & PROFILE
+========================= */
+.profile-bar {
+    background: rgba(15, 23, 42, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 16px;
+    font-size: 13px;
+}
+.profile-meta b {
+    color: var(--muted);
+    font-weight: 500;
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+.profile-meta span {
+    font-weight: 600;
+    color: var(--text);
+}
+/* =========================
+   GRID CARDS (HOME)
+========================= */
+.grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.card {
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.card:hover:not(.disabled) {
+    transform: translateY(-2px);
+    border-color: var(--green);
+    box-shadow: 0 12px 20px -8px rgba(34, 197, 94, 0.2);
+}
+/* Grayout State Class */
+.card.disabled {
+    background: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+    opacity: 0.5;
+    cursor: not-allowed !important;
+    pointer-events: none;
+}
+.card.disabled .card-icon-box {
+    background: #cbd5e1 !important;
+    color: #64748b !important;
+}
+.card-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.card-icon-box {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: var(--green-light);
+    color: var(--green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.card-title {
+    font-weight: 700;
+    font-size: 15px;
+}
+.card-desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+}
+/* Badge for Number */
+.badge-count {
+    background: var(--red);
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+/* =========================
+   HEADER SECTION
+========================= */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    padding-bottom: 14px;
+}
+
+.back {
+    border: none;
+    background: var(--green-light);
+    color: var(--green);
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+}
+
+.back:hover {
+    background: rgba(34, 197, 94, 0.18);
+}
+
+/* =========================
+   FORM CONTROL STYLES
+========================= */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+select, input.form-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.1);
+    background-color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+select[disabled], input.form-input[readonly] {
+    background-color: #f1f5f9 !important;
+    color: #475569 !important;
+    border-color: #cbd5e1 !important;
+    cursor: not-allowed;
+    opacity: 0.9;
+}
+
+/* =========================
+   SECTION SUBHEADERS
+========================= */
+.section-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--muted);
+    letter-spacing: 0.75px;
+    margin: 18px 0 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* =========================
+   ITEMS & MENUS
+========================= */
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.item {
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.item.preordered {
+    background: #fafafa;
+    border-left: 4px solid #94a3b8;
+}
+
+.item-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.item-icon {
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+}
+
+.item-img {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid rgba(0,0,0,0.08);
+}
+
+.item-name {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.qty {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.qty span {
+    font-weight: 700;
+    min-width: 16px;
+    text-align: center;
+}
+
+.qty-badge {
+    background: #e2e8f0;
+    color: #475569;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.btn-counter {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 8px;
+    background: var(--green-light);
+    color: var(--green);
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Bottom Actions */
+.action-submit-btn {
+    width: 100%;
+    margin-top: 24px;
+    padding: 14px;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 10px 15px -3px rgba(34, 197, 94, 0.2);
+    transition: 0.2s;
+}
+
+.action-submit-btn:hover {
+    background: var(--green-hover);
+    transform: translateY(-1px);
+}
+
+/* =========================
+   REGULARIZATION RECORDS
+========================= */
+.reg-row {
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.reg-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.reg-date {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.reg-item-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 4px;
+}
+
+.reg-item-line {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.reg-item-line span {
+    color: var(--green);
+    font-weight: 700;
+}
+/* Card UI for Regularization */
+.reg-card {
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+.reg-header-ui {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed #e2e8f0;
+}
+
+.reg-date-pill {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 4px 10px;
+    border-radius: 6px;
+    text-transform: uppercase;
+}
+
+.reg-cat-pill {
+    font-size: 11px;
+    font-weight: 700;
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.1);
+    padding: 4px 10px;
+    border-radius: 6px;
+    text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+
+<div id="home" class="screen active">
+    <div class="panel">
+        <div class="hero-banner">
+            <div class="brand">Canteen Management System</div>
+        </div>
+        <div id="homeProfileContainer"></div>
+        
+        <div class="grid">
+            <div class="card" id="home-card-employee" onclick="openScreen('employee')">
+                <div class="card-left">
+                    <div class="card-icon-box"><i data-lucide="user"></i></div>
+                    <div>
+                        <div class="card-title">Employee Mode</div>
+                        <div class="card-desc">Employee Meal Order</div>
+                    </div>
+                </div>
+                <i data-lucide="chevron-right" size="18" style="color:var(--muted)"></i>
+            </div>
+            <div class="card" id="home-card-client" onclick="openScreen('client')">
+                <div class="card-left">
+                    <div class="card-icon-box"><i data-lucide="briefcase"></i></div>
+                    <div>
+                        <div class="card-title">Client Mode</div>
+                        <div class="card-desc">Visitor & Client Arrangements</div>
+                    </div>
+                </div>
+                <i data-lucide="chevron-right" size="18" style="color:var(--muted)"></i>
+            </div>
+            <div class="card" id="home-card-regularization" onclick="openScreen('regularization')">
+                <div class="card-left">
+                    <div class="card-icon-box"><i data-lucide="git-pull-request"></i></div>
+                    <div>
+                        <div class="card-title">Regularization Workspace <span class="badge-count" id="reg-count-badge">0</span></div>
+                        <div class="card-desc">View Pending Regularization</div>
+                    </div>
+                </div>
+                <i data-lucide="chevron-right" size="18" style="color:var(--muted)"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="employee" class="screen">
+    <div class="panel">
+        <div class="header">
+            <button class="back" onclick="goHome()"><i data-lucide="arrow-left" size="16"></i> Home</button>
+            <b style="font-size:16px;">Employee Order</b>
+        </div>
+        <div id="employeeProfileContainer"></div>
+        <div class="form-group">
+            <label>Meal Type Configuration</label>
+            <select id="mealType" disabled>
+                <option value="snacks" selected>☕ Snacks</option>
+            </select>
+        </div>
+        <div class="section-title"><i data-lucide="shield-check" size="14"></i> Pre-Ordered Items</div>
+        <div class="menu" id="employeePreorderMenuContainer"></div>
+        <div class="section-title"><i data-lucide="utensils-crossed" size="14"></i> Food Menu</div>
+        <div class="menu" id="employeeFoodMenuContainer"></div>
+        <button class="action-submit-btn" onclick="submitOrderAlert('Employee')">
+            <i data-lucide="shopping-bag"></i> Submit Employee Order
+        </button>
+    </div>
+</div>
+
+<div id="client" class="screen">
+    <div class="panel">
+        <div class="header">
+            <button class="back" onclick="goHome()"><i data-lucide="arrow-left" size="16"></i> Home</button>
+            <b style="font-size:16px;">Client Order</b>
+      </div>
+        <div class="form-row" id="clientMetaRowContainer"></div>
+        <div class="section-title"><i data-lucide="shield-check" size="14"></i> Pre-Ordered Items</div>
+        <div class="menu" id="clientPreorderMenuContainer"></div>
+        <div class="section-title"><i data-lucide="utensils-crossed" size="14"></i> Food Menu</div>
+        <div class="menu" id="clientFoodMenuContainer"></div>
+        <button class="action-submit-btn" onclick="submitOrderAlert('Client')">
+            <i data-lucide="shopping-bag"></i> Submit Client Order
+        </button>
+    </div>
+</div>
+
+<div id="regularization" class="screen">
+    <div class="panel">
+        <div class="header">
+            <button class="back" onclick="goHome()"><i data-lucide="arrow-left" size="16"></i> Home</button>
+            <b style="font-size:16px;">Regularization Workspace</b>
+        </div>
+        <div class="menu" id="regularizationViewList"></div>
+    </div>
+</div>
+
+<script>
+let CMS_DATA = {
+    profile: {
+        name: "Jane Doe",
+        id: "EMP-8842",
+        plant: "Alpha Core Plant",
+        location: "Wing-B Gate 2"
+    },
+    clientInfo: {
+        companyName: "Acme Corp Global",
+        totalMembers: 5
+    },
+    employeeData: {
+        preordered: [
+            { id: "p1", name: "Club Sandwich Wrap", qty: 2, icon: "sandwich", url: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=100&q=80" }
+        ],
+        menu: [
+            { id: "m1", name: "Classic Burger", initialQty: 1, icon: "burger", url: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=100&q=80" },
+            { id: "m2", name: "Pepperoni Pizza Slice", initialQty: 2, icon: "pizza", url: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=100&q=80" }
+        ]
+    },
+    clientData: {
+        preordered: [
+            { id: "cp1", name: "Barbecue Feast XL Pizza", qty: 1, icon: "pizza", url: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=100&q=80" }
+        ],
+        menu: [
+            { id: "cm1", name: "Club Sandwich Wrap", initialQty: 1, icon: "sandwich", url: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=100&q=80" },
+            { id: "cm2", name: "Crispy Fries Bucket", initialQty: 0, icon: "burger", url: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=100&q=80" }
+        ]
+    },
+  regularizationRecords: [
+        { id: 1, date: "12-Jul-2026", category: "Snacks", items: [{ name: "Gourmet Burger", qty: 2 }, { name: "Fries Large", qty: 1 }] },
+        { id: 2, date: "13-Jul-2026", category: "Dinner", items: [{ name: "Pan Pizza XL", qty: 1 }, { name: "Garlic Bread", qty: 2 }] }
+    ]
+};
+
+function renderDynamicCMSLayout() {
+    document.getElementById('reg-count-badge').innerText = CMS_DATA.regularizationRecords.length;
+
+    const profileHTML = `
+        <div class="profile-bar">
+            <div class="profile-meta"><b>Employee Name</b><span>${CMS_DATA.profile.name}</span></div>
+            <div class="profile-meta"><b>Employee ID</b><span>${CMS_DATA.profile.id}</span></div>
+            <div class="profile-meta"><b>Plant Name</b><span>${CMS_DATA.profile.plant}</span></div>
+            <div class="profile-meta"><b>Device Location</b><span>${CMS_DATA.profile.location}</span></div>
+        </div>`;
+    document.getElementById('homeProfileContainer').innerHTML = profileHTML;
+    document.getElementById('employeeProfileContainer').innerHTML = profileHTML;
+
+    document.getElementById('clientMetaRowContainer').innerHTML = `
+        <div><label>Client Name</label><input type="text" class="form-input" value="${CMS_DATA.clientInfo.companyName}" readonly></div>
+        <div><label>Members</label><input type="number" class="form-input" value="${CMS_DATA.clientInfo.totalMembers}" readonly></div>`;
+
+    document.getElementById('employeePreorderMenuContainer').innerHTML = CMS_DATA.employeeData.preordered.map(item => `
+        <div class="item preordered">
+            <div class="item-left"><img src="${item.url}" class="item-img"><div class="item-name">${item.name}</div></div>
+            <div class="qty"><span class="qty-badge">Qty: ${item.qty}</span></div>
+        </div>`).join('');
+
+    document.getElementById('employeeFoodMenuContainer').innerHTML = CMS_DATA.employeeData.menu.map(item => `
+        <div class="item">
+            <div class="item-left"><img src="${item.url}" class="item-img"><div class="item-name">${item.name}</div></div>
+            <div class="qty"><button class="btn-counter" onclick="changeCounterVal(this, -1)">-</button><span>${item.initialQty}</span><button class="btn-counter" onclick="changeCounterVal(this, 1)">+</button></div>
+        </div>`).join('');
+
+    document.getElementById('clientPreorderMenuContainer').innerHTML = CMS_DATA.clientData.preordered.map(item => `
+        <div class="item preordered">
+            <div class="item-left"><img src="${item.url}" class="item-img"><div class="item-name">${item.name}</div></div>
+            <div class="qty"><span class="qty-badge">Qty: ${item.qty}</span></div>
+        </div>`).join('');
+
+    document.getElementById('clientFoodMenuContainer').innerHTML = CMS_DATA.clientData.menu.map(item => `
+        <div class="item">
+            <div class="item-left"><img src="${item.url}" class="item-img"><div class="item-name">${item.name}</div></div>
+            <div class="qty"><button class="btn-counter" onclick="changeCounterVal(this, -1)">-</button><span>${item.initialQty}</span><button class="btn-counter" onclick="changeCounterVal(this, 1)">+</button></div>
+        </div>`).join('');
+
+    document.getElementById('regularizationViewList').innerHTML = CMS_DATA.regularizationRecords.map(record => `
+        <div class="reg-row">
+            <div class="reg-info">
+                <span class="reg-date">Record #${record.id} • ${record.date}</span>
+                <div class="reg-item-list">${record.items.map(item => `<div class="reg-item-line">${item.name} <span>× ${item.qty}</span></div>`).join('')}</div>
+            </div>
+        </div>`).join('');
+
+document.getElementById('regularizationViewList').innerHTML = CMS_DATA.regularizationRecords.map(record => `
+    <div class="reg-card">
+        <div class="reg-header-ui">
+            <span class="reg-date-pill">${record.date}</span>
+            <span class="reg-cat-pill">${record.category}</span>
+        </div>
+        <div class="reg-item-list">
+            ${record.items.map(item => `
+                <div class="reg-item-line" style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                    ${item.name} <span>× ${item.qty}</span>
+                </div>
+            `).join('')}
+        </div>
+    </div>`).join('');
+    lucide.createIcons();
+}
+
+function openScreen(id){
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+function goHome(){ openScreen('home'); }
+
+function changeCounterVal(btnElement, delta) {
+    const spanNode = btnElement.parentNode.querySelector('span');
+    let currentVal = parseInt(spanNode.innerText);
+    currentVal = Math.max(0, currentVal + delta);
+    spanNode.innerText = currentVal;
+}
+
+function submitOrderAlert(mode) {
+    alert(`${mode} Order map array submitted to production kitchen queue safely!`);
+    goHome();
+}
+
+window.onload = renderDynamicCMSLayout;
+</script>
+
+</body>
+</html>
